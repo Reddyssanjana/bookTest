@@ -7,27 +7,19 @@ import Form from 'react-bootstrap/Form';
 const ProductCatalog = () => {
     const [products, setProducts] = useState([]);
     const [searchBook, setsearchBook] = useState('');
-    useEffect(() => {
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
         axios.get(`https://openlibrary.org/search.json?title=${searchBook}`)
             .then(r => {
-                console.log(r.data.docs);
                 setProducts(r.data.docs)
-            })
-            .catch(err => {
-                console.log(err);
-            })
-    }, []);
-    const handleSubmit = async () => {
-        await axios.get(`https://openlibrary.org/search.json?q=the+lord+of+the+rings`)
-            .then(r => {
-                setProducts(r.data)
             })
             .catch(err => {
                 console.log(err);
             })
     }
     const renderTile = (current_item) => {
-        return <ProductTile product={current_item}></ProductTile>;
+        return <ProductTile key={current_item.key} product={current_item}></ProductTile>;
     }
     const allProduct = () => {
         let tiles = [];
@@ -45,17 +37,18 @@ const ProductCatalog = () => {
                 <Form.Group className="mb-3" controlId="formBasicPassword">
                     <Form.Label>Search Book</Form.Label>
                     <Form.Control value={searchBook} type="text" placeholder="Search Book" onChange={(e) => {
+                       
                         setsearchBook(e.target.value);
                     }} />
                 </Form.Group>
 
-                <button onClick={() => handleSubmit()} type="submit">
+                <button onClick={(e) => handleSubmit(e)} type="submit">
                     Submit
                 </button>
             </Form>
-             <Row xs={1} className="mt-1 g-4" md={4} >
+            <Row xs={1} className="mt-1 g-4" md={4} >
                 {allProduct()}
-            </Row> 
+            </Row>
         </>
     )
 }
